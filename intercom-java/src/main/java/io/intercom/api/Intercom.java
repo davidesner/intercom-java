@@ -2,6 +2,15 @@ package io.intercom.api;
 
 import java.net.URI;
 
+/**
+ * Customized class originally developed by Intercom Inc.,2014, under the ASF 2
+ * license. The original source code available at
+ * https://github.com/intercom/intercom-java. (v.2.5.0)
+ *
+ * Minor change adding means to manage current API rate limit details.
+ *
+ * @author David Esner <esnerda at gmail.com>
+ */
 public class Intercom {
 
     private static final URI API_BASE_URI = URI.create("https://api.intercom.io/");
@@ -32,6 +41,13 @@ public class Intercom {
     private static volatile boolean requestUsingCaches = false;
 
     private static volatile HttpConnectorSupplier httpConnectorSupplier = HttpConnectorSupplier.defaultSupplier;
+
+    //new rateLimitDetails object
+    private static volatile RateLimitDetails rateLimitDetails = new RateLimitDetails();
+
+    public static RateLimitDetails getRateLimitDetails() {
+        return Intercom.rateLimitDetails;
+    }
 
     public static long currentTimestamp() {
         return System.currentTimeMillis()/1000;

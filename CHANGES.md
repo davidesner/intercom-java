@@ -1,5 +1,11 @@
 ### Changes
 
+#### 2.5.0 (modified)
+- Add ratelimit info into core class
+- Bugfix - parsing User object, invalid companies field definition
+- Bugfix - Job.listJobErrorFeed - proper JSON object initialization
+
+
 #### 2.5.0
 - Fix for #207 to remove a non-existent API call (PR #211)
 - Fix for #197 to prioritise user_id when tagging users (PR #199)

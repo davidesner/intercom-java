@@ -25,6 +25,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Customized class originally developed by Intercom Inc.,2014, under the ASF 2
+ * license. The original source code available at
+ * https://github.com/intercom/intercom-java.
+ *
+ * Minor change adding means to manage current API rate limit details.
+ *
+ * @author David Esner <esnerda at gmail.com>
+ */
 class HttpClient {
 
     private static final Logger logger = LoggerFactory.getLogger("intercom-java");
@@ -146,15 +155,26 @@ class HttpClient {
         return conn;
     }
 
+    /* Store API rate limit on each request
+     */
     private <T> T runRequest(URI uri, JavaType javaType, HttpURLConnection conn) throws IOException {
         conn.connect();
         final int responseCode = conn.getResponseCode();
+        //get response headers
+        String ratelimit = conn.getHeaderField(RATE_LIMIT_HEADER);
+        String rateLimitRemaining = conn.getHeaderField(RATE_LIMIT_REMAINING_HEADER);
+        String rateLimitReset = conn.getHeaderField(RATE_LIMIT_RESET_HEADER);
+        //set current rate limit
+        if (ratelimit != null && rateLimitRemaining != null && rateLimitReset != null) {
+            Intercom.getRateLimitDetails().updateLimit(Integer.valueOf(ratelimit), Integer.valueOf(rateLimitRemaining), Long.valueOf(rateLimitReset));
+        }
         if (responseCode >= 200 && responseCode < 300) {
             return handleSuccess(javaType, conn, responseCode);
         } else {
             return handleError(uri, conn, responseCode);
         }
     }
+
 
     private <T> T handleError(URI uri, HttpURLConnection conn, int responseCode) throws IOException {
         ErrorCollection errors;

@@ -368,8 +368,10 @@ public class User extends TypedData implements Replier {
     private LocationData locationData;
 
     @JsonIgnoreProperties(ignoreUnknown = false)
-    @JsonProperty("companies")
+    //@JsonProperty("companies") bugfix original sdk
+    @JsonIgnore
     private CompanyCollection companyCollection = new CompanyCollection();
+
 
     @JsonProperty("social_profiles")
     private SocialProfileCollection socialProfileCollection = new SocialProfileCollection();
